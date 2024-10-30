@@ -66,7 +66,7 @@ async function processPlaces() {
 
   for (const row of data) {
     const placeName = row.Company;
-    const existingRating = row["Rating . Review"];
+    const existingRating = row["Rating out of 5"];
     const existingReviewCount = row["Total Number of Reviews"];
 
     try {
@@ -89,7 +89,16 @@ async function processPlaces() {
 
       // Convert both rating values to strings, trim, and compare
       const apiRatingString = String(rating).trim(); // Convert API rating to a string and trim
-      const existingRatingString = String(existingRating).trim(); // Convert existing rating to a string and trim
+      // Convert existing rating to a string, trim it, and remove any brackets
+      const existingRatingCleaned = String(existingRating)
+        .trim()
+        .replace(/\(.*?\)/g, "")
+        .trim(); // Remove brackets and trim again
+
+      // If you want to further clean up, you might want to remove any extra spaces
+      const existingRatingString = existingRatingCleaned.replace(/\s+/g, " "); // Replace multiple spaces with a single space
+
+      // const existingRatingString = String(existingRating).trim(); // Convert existing rating to a string and trim
       const ratingMatch =
         apiRatingString === existingRatingString ? "Right" : "Wrong"; // Direct string comparison
       const correctRating =
@@ -99,7 +108,20 @@ async function processPlaces() {
 
       // Convert both review count values to strings, trim, and compare
       const apiReviewCountString = String(reviewsCount).trim(); // Convert API review count to a string and trim
-      const existingReviewCountString = String(existingReviewCount).trim(); // Convert existing review count to a string and trim
+      // const existingReviewCountString = String(existingReviewCount).trim(); // Convert existing review count to a string and trim
+      // Convert existing rating to a string, trim it, and remove any brackets
+      // Convert existing review count to a string, trim it, and remove any parentheses
+      const existingReviewCountCleaned = String(existingReviewCount)
+        .trim() // Trim leading/trailing whitespace
+        .replace(/[()]/g, "") // Remove both open and close parentheses
+        .trim(); // Trim again to ensure no spaces remain
+
+      // If you want to further clean up, you might want to remove any extra spaces
+      const existingReviewCountString = existingReviewCountCleaned.replace(
+        /\s+/g,
+        " "
+      ); // Replace multiple spaces with a single space
+
       const reviewCountMatch =
         apiReviewCountString === existingReviewCountString ? "Yes" : "No"; // Direct string comparison
       const correctReviewCount =
@@ -110,7 +132,7 @@ async function processPlaces() {
       auditData.push({
         ...row,
         "Correct Rating out of 5": correctRating,
-        "Rating . Review": ratingMatch,
+        "Rating . Review ( Right /Wrong)": ratingMatch,
         "Correct Google reviews ( Yes/No)": reviewCountMatch,
         "Correct Total Number of Reviews": correctReviewCount,
       });
