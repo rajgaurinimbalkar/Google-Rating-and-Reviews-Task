@@ -7,7 +7,7 @@ const path = require("path");
 const apiKey = process.env.API_KEY;
 
 // Load and parse the Excel file
-const workbook = xlsx.readFile("./input.xlsx");
+const workbook = xlsx.readFile("../Documents/input.xlsx");
 const sheetName = workbook.SheetNames[0];
 const worksheet = workbook.Sheets[sheetName];
 
@@ -130,7 +130,10 @@ async function processPlaces() {
   const newSheet = xlsx.utils.json_to_sheet(auditData);
   const newWorkbook = xlsx.utils.book_new();
   xlsx.utils.book_append_sheet(newWorkbook, newSheet, sheetName);
-  xlsx.writeFile(newWorkbook, path.resolve(__dirname, "output.xlsx"));
+  xlsx.writeFile(
+    newWorkbook,
+    path.resolve(__dirname, "../Documents/output.xlsx")
+  );
 
   console.log("Audit completed and saved in Updated_Review_Rating_Audit.xlsx");
 }
